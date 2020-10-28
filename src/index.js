@@ -35,7 +35,7 @@ ReactDOM.render(
     >
       <App />
     </Auth0Provider>
-  </Provider>,
+    </Provider>,
   document.getElementById("root")
 );
 

@@ -22,10 +22,12 @@ const useStyles = makeStyles((theme) => ({
 const CreateAuctionPage = ({ auctionStore, routerHistory }) => {
   const [title, setTitle] = useState("");
   const [base64, setBase64] = useState(null);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const classes = useStyles();
 
   const createAuction = async (title) => {
-    await auctionStore.createAuction(title, base64);
+    await auctionStore.createAuction(title, base64, description, category);
     routerHistory.push("/auctions");
   };
 
@@ -41,6 +43,24 @@ const CreateAuctionPage = ({ auctionStore, routerHistory }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Example: Lemonade from the '60s"
+            type="string"
+            variant="outlined"
+          />
+          <TextField
+            label="Description"
+            id="standard-adornment-amount"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description of Item"
+            type="string"
+            variant="outlined"
+          />
+          <TextField
+            label="Type"
+            id="standard-adornment-amount"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Item Type"
             type="string"
             variant="outlined"
           />

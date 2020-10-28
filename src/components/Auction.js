@@ -42,6 +42,13 @@ const useStyles = makeStyles({
     paddingBottom: 10,
     textAlign: 'center',
   },
+  description:{
+    display: 'flex',
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
 });
 
 const Label = styled.p`
@@ -54,7 +61,7 @@ const Value = styled.span`
   font-size: 14px;
 `;
 
-const Auction = ({ auction, onBid, bidState }) => {
+const Auction = ({ auction, onBid, bidState, display }) => {
   const classes = useStyles();
   const amount = auction.highestBid.amount;
 
@@ -76,6 +83,11 @@ const Auction = ({ auction, onBid, bidState }) => {
           image={pictureUrl}
           title="Contemplative Reptile"
         />
+        <CardContent className={classes.detailsContainer}>
+          <div className={classes.description}>
+            {auction.description}
+          </div>
+        </CardContent>
         <CardContent className={classes.detailsContainer}>
           <div className={classes.details}>
               <div>
@@ -119,7 +131,7 @@ const Auction = ({ auction, onBid, bidState }) => {
       </CardActionArea>
       <CardActions>
         <div className={classes.cardActions}>
-          { (bidState === 'OWN_AUCTION' || bidState === 'HIGHEST_BIDDER') && (
+          { (bidState === 'OWN_AUCTION' || bidState === 'HIGHEST_BIDDER') && display && (
             <Button
               disabled={true}
               onClick={() => onBid()}
