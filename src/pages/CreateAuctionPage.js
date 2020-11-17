@@ -23,11 +23,11 @@ const CreateAuctionPage = ({ auctionStore, routerHistory }) => {
   const [title, setTitle] = useState("");
   const [base64, setBase64] = useState(null);
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
   const classes = useStyles();
 
   const createAuction = async (title) => {
-    await auctionStore.createAuction(title, base64, description, category);
+    await auctionStore.createAuction(title, base64, description, type);
     routerHistory.push("/auctions");
   };
 
@@ -58,8 +58,8 @@ const CreateAuctionPage = ({ auctionStore, routerHistory }) => {
           <TextField
             label="Type"
             id="standard-adornment-amount"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={type}
+            onChange={(e) => setType(e.target.value)}
             placeholder="Item Type"
             type="string"
             variant="outlined"

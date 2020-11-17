@@ -12,7 +12,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import MyAuctionsPage from './pages/MyAuctionsPage';
 import { inject, observer } from 'mobx-react';
 import MyBidsPage from './pages/MyBidsPage';
-import FindAuctionPage from './pages/FindAuctionPage';
+import HomePage from './pages/HomePage';
 const App = (props) => {
   const { overlayStore } = props;
 
@@ -24,7 +24,7 @@ const App = (props) => {
           <ButtonAppBar />
         </header>
         <Switch>
-          <PrivateRoute path="/" exact component={AuctionsPage} />
+          <PrivateRoute path="/" exact component={HomePage} />
           <PrivateRoute path="/auctions" component={AuctionsPage} />
           <PrivateRoute path="/create" component={CreateAuctionPage} />
           <PrivateRoute path="/myauctions" component={MyAuctionsPage} />

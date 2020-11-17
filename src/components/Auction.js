@@ -87,6 +87,9 @@ const Auction = ({ auction, onBid, bidState, display }) => {
           <div className={classes.description}>
             {auction.description}
           </div>
+          <div className={classes.description}>
+            {auction.type}
+          </div>
         </CardContent>
         <CardContent className={classes.detailsContainer}>
           <div className={classes.details}>
@@ -97,14 +100,16 @@ const Auction = ({ auction, onBid, bidState, display }) => {
           </div>
           <div className={classes.details}>
             <div>
-              <Countdown
-                date={auction.endingAt}
-                renderer={({ hours, minutes, seconds }) => (
-                  <Value>
-                    {hours} hours {minutes} mins {seconds} secs
-                  </Value>
-                )}
-              />
+              {
+                  <Countdown
+                  date={auction.endingAt}
+                  renderer={({ hours, minutes, seconds }) => (
+                    <Value>
+                      {hours} hours {minutes} mins {seconds} secs
+                    </Value>
+                  )}
+                  />
+              }
               <Label>TIME REMAINING</Label>
             </div>
           </div>

@@ -24,6 +24,7 @@ const useStyles = makeStyles({
       flexBasis: cardWidth,
       flexShrink: 0,
       padding: cardPadding,
+      
     },
     fabContainer: {
       position: 'fixed',
@@ -62,6 +63,9 @@ const MyAuctionsPage = (props) => {
             );
         }
         return auctions.map((auction) => {
+            /*if(auction.status !== 'OPEN'){
+                return;
+            }*/
             return (
                 <div key={auction.id} className = {classes.auctionCard}>
                     <Auction

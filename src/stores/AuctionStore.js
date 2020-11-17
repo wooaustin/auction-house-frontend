@@ -9,12 +9,13 @@ const axios = Axios.create({
 
 class AuctionStore {
   @observable auctions = [];
-  @observable auctionTypes = {};
+  @observable typeList = [];
   @observable biddingOn = null;
   @observable bidAmount = 0;
-  @action
-
+  @observable recommendations = [];
+  
   /*Fetch all auctions with status set to 'OPEN' */
+  @action
   async fetchAuctions() {
     try {
       const result = await axios.get('/auctions?status=OPEN', {
@@ -47,7 +48,13 @@ class AuctionStore {
           Authorization: AuthStore.token,
         }
       });
-      this.auctions = result.data;
+      let temp = [];
+      result.data.forEach((auction) =>{
+        if(auction.status === 'OPEN'){
+          temp.push(auction);
+        }
+      });
+      this.auctions = temp;
     }catch(error){
       alert('Could not fetch your auctions! Check console for more details.');
       console.error(error);
@@ -75,81 +82,50 @@ class AuctionStore {
   getAuctionsByType(type){
     let arr = [];
     this.auctions.forEach((auction) => {
-      if(auction.type === type){
-        arr.add(auction);
+      if(auction.type === type && auction.seller !== AuthStore.email){
+        arr.push(auction);
       }
     });
     return arr;
   }
 
-  /* Checks all auctions regardless of status for user activity, activity is defined by either a user is hosting an auction or bidding on one */
+  /* Builds a typelist of every type of auction in the database at the moment */
+  @action 
+  buildMapping(){
+    let arr = [];
+    this.auctions.forEach((auction) =>{
+      if(auction.type && !arr.includes(auction.type))
+        arr.push(auction.type);
+    });
+    this.typeList = arr;
+  }
+
   @action
-  activityExists(){
-    for(const auction in this.auctions){
-      if(auction.seller === AuthStore.email || auction.bidder === AuthStore.email){
-        return true;
-      }
+  findRandom(){
+    const type = Math.floor(Math.random() * this.typeList.length);
+    let auctions = this.getAuctionsByType(this.typeList[type]);
+    const randomIndex = Math.floor(Math.random() * auctions.length);
+    const auction = auctions[randomIndex];
+    return auction;
+  }
+
+  @action
+  async buildRecommendations(){
+    //Get all items in the database to classify type mapping
+    await this.fetchAuctions();
+    //Build type mapping
+    this.buildMapping();
+    //Randomize within the typeList 2 indexes to choose from
+    let rec1 = this.findRandom();
+    if(this.recommendations.length < 2 && rec1){
+      this.recommendations.push(rec1);
     }
-    return false;
+    let rec2 = this.findRandom();
+    if(this.recommendations.length < 2 && rec2){
+      this.recommendations.push(rec2);
+    }
+    //alert(`Length of rec list ${this.recommendations.length}`);
   }
-
-  /* Builds HashMap of auctions based on user activity type frequency, sorted in decreasing order */
-  @action
-  buildUserFrequencyMap(){
-    const map = {};
-    this.auctions.forEach((auction) => {
-      if(map[auction.type] && (auction.seller === AuthStore.email || auction.bidder === AuthStore.email)){
-        map[auction.type]++;
-      }
-    });
-    return map;
-  }
-
-  /* Builds HashMap of auctions based on total type frequency, sorted in decreasing order */
-  @action
-  buildDefaultFrequencyMap(){
-    const map = {};
-    this.auctions.forEach((auction) => {
-      if(map[auction.type]){
-        map[auction.type]++;
-      }
-      else{
-        map[auction.type] = 1;
-      }
-    });
-    return map;
-  }
-
-
-  //Removes all entries of userMap from defaultMap, creating an ordering of userMap items first, then defaultMap items next  
-  @action
-  filterMappings(userMap, defaultMap){
-    defaultMap.forEach((entry) =>{
-      if(userMap[entry]){
-        defaultMap.splice(defaultMap.indexOf(entry));
-      }
-    })
-  }
-
-
-  @action
-  async fetchRecommendations(){
-    map = {};
-    //Load the correct data into the AuctionStore
-    //Fetch all auctions might be unnecessary in this spot, will only need to load each time page is loaded
-    this.fetchAllAuctions();
-    const defaultMap = this.buildDefaultFrequencyMap();
-    const userMap = this.buildUserFrequencyMap();
-    filterMappings(defaultMap, userMap);
-    userMap.map((entry) =>{
-      map.push(entry);
-    });
-    defaultMap.map((entry) => {
-      map.push(entry);
-    })
-    this.auctions = map;
-  }
-
 
   @action
   async fetchMyBids(){
@@ -159,7 +135,13 @@ class AuctionStore {
           Authorization: AuthStore.token,
         }
       });
-      this.auctions = result.data;
+      let temp = [];
+      result.data.forEach((auction) =>{
+        if(auction.status === 'OPEN'){
+          temp.push(auction);
+        }
+      });
+      this.auctions = temp;
     }catch(error){
       alert('Count not fetch your auctions! Check console for more details');
       console.error(error);
@@ -206,12 +188,12 @@ class AuctionStore {
     OverlayStore.setLoadingSpinner(false);
   }
 
-  async createAuction(title, pictureBase64, description, category) {
+  async createAuction(title, pictureBase64, description, type) {
     let auctionId;
     OverlayStore.setLoadingSpinner(true);
 
     try {
-      const createAuctionResult = await axios.post('/auction', { title, description, category }, {
+      const createAuctionResult = await axios.post('/auction', { title, description, type }, {
         headers: {
           Authorization: AuthStore.token,
         }

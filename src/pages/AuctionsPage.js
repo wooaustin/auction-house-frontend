@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: "flex-end",
     margin: "5px",
   },
-  serachText:{
+  searchText:{
     width: "200px",
     margin: "5px",
   }
@@ -65,7 +65,7 @@ const AuctionsPage = (props) => {
     (async () => {
       await auctionStore.fetchAuctions();
       setInterval(() => {
-        if (routerHistory.location.pathname === '/auctions' || routerHistory.location.pathname === '/') {
+        if (routerHistory.location.pathname === '/auctions') {
           auctionStore.fetchAuctions();
         }
       }, process.env.REACT_APP_REFRESH_RATE);
@@ -90,13 +90,10 @@ const AuctionsPage = (props) => {
         bidState = 'OWN_AUCTION';
       }
 
-      if (auction.highestBid.bidder === authStore.email) {
+      if (auction.bidder === authStore.email) {
         bidState = 'HIGHEST_BIDDER';
       }
-      if(!auction.title.includes(filter)){
-
-      }
-      else{
+      if(auction.title.includes(filter)){
         return (
         <div key={auction.id} className={classes.auctionCard}>
           <Auction
@@ -124,7 +121,6 @@ const AuctionsPage = (props) => {
       </div>
       <div className={classes.auctionsContainer}>
         <BidModal />
-      
         {renderAuctions()}
       
         <div className={classes.fabContainer}>

@@ -24,6 +24,7 @@ const useStyles = makeStyles({
       flexBasis: cardWidth,
       flexShrink: 0,
       padding: cardPadding,
+      
     },
     fabContainer: {
       position: 'fixed',

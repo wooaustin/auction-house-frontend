@@ -58,7 +58,7 @@ const ButtonAppBar = (props) => {
                             {isAuthenticated && (
                                 <Button
                                 className={classes.button}
-                                onClick={()=>routerHistory.push("/findauctions")}
+                                onClick={()=>routerHistory.push("/auctions")}
                                 >
                                 Find Auctions
                                 </Button>
